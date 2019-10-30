@@ -43,7 +43,14 @@ const StubCollections = (() => {
   privateApi.sandbox = sinon.createSandbox();
   privateApi.pairs = new Map();
   privateApi.collections = [];
-  privateApi.symbols = Object.keys(Mongo.Collection.prototype);
+
+  // Retrieve all property names to stub. Can't use _.allKeys, as it is not available in
+  // Underscore 1.5.2, and _.keys will not return all properties when using some common
+  // packages extending collections.
+  privateApi.symbols = [];
+  for (let symbol in Mongo.Collection.prototype) {
+    privateApi.symbols.push(symbol);
+  }
 
   privateApi.assignLocalFunctionsToReal = (local, real) => {
     privateApi.symbols.forEach((symbol) => {
